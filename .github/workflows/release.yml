@@ -1,16 +1,16 @@
-name: Upload Release Assets
+name: Update Assets
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main # يشتغل أول ما تعمل بوش للكود الجديد
 
 permissions:
   contents: write
-  id-token: write 
+  id-token: write
 
 jobs:
-  build-and-release:
+  build-all:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,25 +25,30 @@ jobs:
           pip install build
           python -m build
 
+      - name: Install nfpm
+        run: |
+          echo 'deb [trusted=yes] https://repo.goreleaser.com/apt/ /' | sudo tee /etc/apt/sources.list.d/goreleaser.list
+          sudo apt-get update
+          sudo apt-get install nfpm
+
+      - name: Build .deb and .rpm
+        run: |
+          nfpm pkg --packager deb --target dist/
+          nfpm pkg --packager rpm --target dist/
+
       - name: Create Windows Portable Zip
         run: |
           echo "@echo off" > run_miku.bat
-          echo "color 0B" >> run_miku.bat
           echo "python src/mikufetch/main.py" >> run_miku.bat
           echo "pause" >> run_miku.bat
           zip -r mikufetch-windows.zip src/ run_miku.bat
 
-      - name: Upload Assets to GitHub Release
+      - name: Update GitHub Release (v0.1.0)
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: v0.1.0 # حددنا التاج ده بالذات عشان يرمي فيه
           files: |
-            dist/*.whl
-            dist/*.tar.gz
+            dist/*
             mikufetch-windows.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          packages-dir: dist/
