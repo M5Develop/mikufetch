@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  id-token: write 
 
 jobs:
   build-and-release:
@@ -32,11 +33,17 @@ jobs:
           echo "pause" >> run_miku.bat
           zip -r mikufetch-windows.zip src/ run_miku.bat
 
-      - name: Upload Assets to Release
+      - name: Upload Assets to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/*
+            dist/*.whl
+            dist/*.tar.gz
             mikufetch-windows.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist/
