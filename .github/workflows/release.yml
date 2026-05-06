@@ -3,7 +3,8 @@ name: Update Assets
 on:
   push:
     branches:
-      - main # يشتغل أول ما تعمل بوش للكود الجديد
+      - main
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -46,7 +47,7 @@ jobs:
       - name: Update GitHub Release (v0.1.0)
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v0.1.0 # حددنا التاج ده بالذات عشان يرمي فيه
+          tag_name: v0.1.0 
           files: |
             dist/*
             mikufetch-windows.zip
