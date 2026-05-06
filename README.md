@@ -1,6 +1,7 @@
 # mikufetch
 
 A Hatsune Miku-themed system fetch tool for the terminal, written in Python.
+If you are looking for a Neofetch alternative that brings your favorite Vocaloid to your terminal, mikufetch is the perfect choice for your Linux rice
 
 ```
    ||       ||     runner@hostname
@@ -17,6 +18,9 @@ A Hatsune Miku-themed system fetch tool for the terminal, written in Python.
  /    MIKU     \
 ```
 
+![Python](https://img.shields.io/badge/python-3.11+-blue.svg) 
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Stars](https://img.shields.io/github/stars/M5Develop/mikufetch?style=social)
 ## Features
 
 - **Hatsune Miku ASCII art** rendered in CYAN in your terminal
