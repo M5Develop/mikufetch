@@ -1,0 +1,19 @@
+[project]
+name = "mikufetch"
+version = "0.1.0"
+description = "A Hatsune Miku-themed system fetch tool for the terminal"
+authors = [{ name = "M5 Dev", email = "claus.valca67@gmail.com" }]
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+keywords = ["fetch", "neofetch", "miku", "system-info", "cli"]
+dependencies = [
+    "psutil>=7.2.2",
+]
+
+[project.scripts]
+mikufetch = "mikufetch.main:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
