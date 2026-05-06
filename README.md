@@ -33,7 +33,7 @@ A Hatsune Miku-themed system fetch tool for the terminal, written in Python.
 ### From source
 
 ```bash
-pip install .
+pip install mikufetch
 ```
 
 Then run from anywhere:
@@ -45,7 +45,7 @@ mikufetch
 ### Development mode
 
 ```bash
-pip install -e .
+pip install -e mikufetch
 ```
 
 ## Requirements
