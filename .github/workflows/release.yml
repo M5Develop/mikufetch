@@ -3,7 +3,7 @@ name: Upload Release Assets
 on:
   push:
     tags:
-      - 'v*' # هيشتغل لما ترفع تاج بيبدأ بـ v
+      - 'v*'
 
 permissions:
   contents: write
@@ -19,15 +19,24 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install build tools
-        run: pip install build
+      - name: Build Wheel
+        run: |
+          pip install build
+          python -m build
 
-      - name: Build package
-        run: python -m build
+      - name: Create Windows Portable Zip
+        run: |
+          echo "@echo off" > run_miku.bat
+          echo "color 0B" >> run_miku.bat
+          echo "python src/mikufetch/main.py" >> run_miku.bat
+          echo "pause" >> run_miku.bat
+          zip -r mikufetch-windows.zip src/ run_miku.bat
 
-      - name: Create Release and Upload Assets
+      - name: Upload Assets to Release
         uses: softprops/action-gh-release@v2
         with:
-          files: dist/*
+          files: |
+            dist/*
+            mikufetch-windows.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
