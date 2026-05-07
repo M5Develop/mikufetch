@@ -1,9 +1,9 @@
-name: Update Assets
+name: Release m5-mikufetch
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*'
   workflow_dispatch:
 
 permissions:
@@ -15,13 +15,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Build Wheel
+      - name: Build tar.gz + whl
         run: |
           pip install build
           python -m build
@@ -37,19 +37,35 @@ jobs:
           nfpm pkg --packager deb --target dist/
           nfpm pkg --packager rpm --target dist/
 
-      - name: Create Windows Portable Zip
+      - name: Build Windows zip
         run: |
-          echo "@echo off" > run_miku.bat
-          echo "python src/mikufetch/main.py" >> run_miku.bat
-          echo "pause" >> run_miku.bat
-          zip -r mikufetch-windows.zip src/ run_miku.bat
+          echo "@echo off" > run_mikufetch.bat
+          echo "python mikufetch/main.py %*" >> run_mikufetch.bat
+          echo "pause" >> run_mikufetch.bat
+          zip -r dist/mikufetch-windows.zip mikufetch/ run_mikufetch.bat pyproject.toml README.md
 
-      - name: Update GitHub Release (v0.1.0)
+      - name: Upload Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v0.1.0 
+          tag_name: ${{ github.ref_name }}
+          name: "m5-mikufetch ${{ github.ref_name }}"
+          body: |
+            ## 🎵 m5-mikufetch ${{ github.ref_name }}
+            
+            ### Install
+            ```bash
+            pip install m5-mikufetch
+             ```
+            
+            ### Packages
+            | File | Platform |
+            |------|----------|
+            | `.whl` | pip / PyPI |
+            | `.tar.gz` | source |
+            | `.deb` | Ubuntu / Debian |
+            | `.rpm` | Fedora / RHEL |
+            | `.zip` | Windows |
           files: |
             dist/*
-            mikufetch-windows.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

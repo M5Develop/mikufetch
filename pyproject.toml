@@ -1,6 +1,6 @@
 [project]
 name = "m5-mikufetch"
-version = "0.1.0"
+version = "0.2.0"
 description = "A Hatsune Miku-themed system fetch tool for the terminal"
 authors = [{ name = "M5 Dev", email = "claus.valca67@gmail.com" }]
 readme = "README.md"

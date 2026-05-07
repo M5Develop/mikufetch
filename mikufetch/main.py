@@ -4,14 +4,13 @@ import os
 import time
 import getpass
 import subprocess
+import argparse
+import random
 
-from mikufetch.ascii_art import MIKU_ART
+from mikufetch.ascii_art import MIKU_ART, TETO_ART, ARTS, CYAN, RED, WHITE, RESET
 
-CYAN  = "\033[96m"
-WHITE = "\033[97m"
-BOLD  = "\033[1m"
-DIM   = "\033[2m"
-RESET = "\033[0m"
+BOLD = "\033[1m"
+DIM  = "\033[2m"
 
 
 def get_distro() -> str:
@@ -35,8 +34,7 @@ def get_cpu_info() -> str:
                         return line.split(":", 1)[1].strip()
         except Exception:
             pass
-    cpu = platform.processor()
-    return cpu if cpu else "Unknown CPU"
+    return platform.processor() or "Unknown CPU"
 
 
 def get_shell() -> str:
@@ -45,7 +43,6 @@ def get_shell() -> str:
         name = shell_env.split("/")[-1]
         if name not in ("sh", ""):
             return name
-
     skip = {"sh", "python", "python3", "python3.11", "python3.12", ""}
     pid = os.getppid()
     for _ in range(5):
@@ -61,11 +58,6 @@ def get_shell() -> str:
                         break
         except Exception:
             break
-
-    parent = os.environ.get("PARENT", "")
-    if parent:
-        return parent.split("/")[-1]
-
     return shell_env.split("/")[-1] if shell_env else "sh"
 
 
@@ -121,7 +113,7 @@ def get_sys_info() -> dict:
         "os":       get_distro(),
         "kernel":   platform.release().split("-")[0],
         "cpu":      get_cpu_info(),
-        "ram":      (
+        "ram": (
             f"{round(psutil.virtual_memory().used  / 1024**3, 2)}GB"
             f" / "
             f"{round(psutil.virtual_memory().total / 1024**3, 2)}GB"
@@ -133,10 +125,9 @@ def get_sys_info() -> dict:
     }
 
 
-def build_info_lines(info: dict) -> list[str]:
-    label = lambda k: f"{CYAN}{BOLD}{k}{RESET}{WHITE}"
+def build_info_lines(info: dict, color: str) -> list[str]:
+    label = lambda k: f"{color}{BOLD}{k}{RESET}{WHITE}"
     sep   = f"{DIM}@{RESET}"
-
     return [
         f"{BOLD}{info['user']}{sep}{info['host']}{RESET}",
         f"{DIM}{'─' * (len(info['user']) + len(info['host']) + 1)}{RESET}",
@@ -152,13 +143,46 @@ def build_info_lines(info: dict) -> list[str]:
 
 
 def main():
-    info       = get_sys_info()
-    info_lines = build_info_lines(info)
-    art        = MIKU_ART
+    parser = argparse.ArgumentParser(
+        prog="mikufetch",
+        description="🎵 System fetch tool — Miku & Teto edition"
+    )
+    parser.add_argument(
+        "--art", "-a",
+        choices=["miku", "teto"],
+        default=None,
+        help="Choose character: miku (default) or teto"
+    )
+    parser.add_argument(
+        "--teto", "-t",
+        action="store_true",
+        help="Kasane Teto mode 🔴"
+    )
+    parser.add_argument(
+        "--random", "-r",
+        action="store_true",
+        help="Random character"
+    )
+    args = parser.parse_args()
 
-    rows = max(len(art), len(info_lines))
-    art_lines  = art       + ["                   "] * (rows - len(art))
-    info_lines = info_lines + [""]                  * (rows - len(info_lines))
+    if args.random:
+        choice = random.choice(["miku", "teto"])
+    elif args.teto:
+        choice = "teto"
+    elif args.art:
+        choice = args.art
+    else:
+        choice = "miku"
+
+    art   = ARTS[choice]
+    color = RED if choice == "teto" else CYAN
+
+    info       = get_sys_info()
+    info_lines = build_info_lines(info, color)
+
+    rows       = max(len(art), len(info_lines))
+    art_lines  = art        + ["                   "] * (rows - len(art))
+    info_lines = info_lines + [""]                   * (rows - len(info_lines))
 
     print()
     for art_line, info_line in zip(art_lines, info_lines):

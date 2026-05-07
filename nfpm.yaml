@@ -1,17 +1,17 @@
 name: "m5-mikufetch"
 arch: "amd64"
 platform: "linux"
-version: "0.1.0" # ثابت دلوقتي زي ما إنت عايز
+version: "0.2.0"
 section: "utils"
 priority: "optional"
 maintainer: "Claus <claus.valca67@gmail.com>"
-description: "A stylish system fetch tool featuring Hatsune Miku."
+description: "A stylish system fetch tool featuring Hatsune Miku & Kasane Teto."
 vendor: "M5Develop"
 homepage: "https://github.com/M5Develop/mikufetch"
 license: "MIT"
 
 contents:
-  - src: "src/mikufetch/main.py"
+  - src: "mikufetch/main.py"
     dst: "/usr/bin/m5-mikufetch"
     type: "file"
     file_info:
