@@ -1,14 +1,14 @@
 [project]
 name = "m5-mikufetch"
 version = "0.2.0"
-description = "A Hatsune Miku-themed system fetch tool for the terminal"
+description = "A Hatsune Miku & Kasane Teto themed system fetch tool for the terminal"
 authors = [{ name = "M5 Dev", email = "claus.valca67@gmail.com" }]
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
-keywords = ["fetch", "neofetch", "miku", "system-info", "cli"]
+keywords = ["fetch", "neofetch", "miku", "teto", "vocaloid", "utau", "system-info", "cli"]
 dependencies = [
-    "psutil>=7.2.2",
+    "psutil>=5.9",
 ]
 
 [project.scripts]
@@ -17,3 +17,6 @@ mikufetch = "mikufetch.main:main"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["mikufetch"]
