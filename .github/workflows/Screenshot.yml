@@ -1,0 +1,37 @@
+name: Generate Screenshot
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  screenshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install mikufetch
+        run: |
+          pip install m5-mikufetch
+
+      - name: Install ansi2html
+        run: |
+          pip install ansi2html
+
+      - name: Generate HTML screenshot
+        run: |
+          mikufetch --miku | ansi2html --scheme solarized > screenshot_miku.html
+          mikufetch --teto | ansi2html --scheme solarized > screenshot_teto.html
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: mikufetch-screenshots
+          path: |
+            screenshot_miku.html
+            screenshot_teto.html
